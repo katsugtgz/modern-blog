@@ -3,203 +3,202 @@
 @section('title', 'Home')
 
 @section('content')
-    <!-- Hero Section -->
-    <div class="relative bg-indigo-700">
-        <div class="absolute inset-0">
-            <img class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1521737852567-6949f3f9f2b5?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80" alt="People working on laptops">
-            <div class="absolute inset-0 bg-indigo-700 mix-blend-multiply" aria-hidden="true"></div>
-        </div>
-        <div class="relative max-w-7xl mx-auto py-24 px-4 sm:py-32 sm:px-6 lg:px-8">
-            <h1 class="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">Modern Blog</h1>
-            <p class="mt-6 text-xl text-indigo-100 max-w-3xl">Discover insightful articles, tutorials, and stories from our community of writers.</p>
-            <div class="mt-10">
-                <a href="{{ route('posts.index') }}" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-indigo-700 bg-white hover:bg-indigo-50">
-                    Explore Blog
-                </a>
-                @guest
-                    <a href="{{ route('register') }}" class="inline-flex items-center ml-4 px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
-                        Join the Community
-                    </a>
-                @endguest
-            </div>
-        </div>
-    </div>
+    @php($lead = $latestPosts->first())
 
-    <!-- Latest Posts Section -->
-    <div class="py-12 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="lg:text-center mb-10">
-                <h2 class="text-base text-indigo-600 font-semibold tracking-wide uppercase">Latest Posts</h2>
-                <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-                    Fresh Content for You
-                </p>
-            </div>
+    {{-- Masthead / lead story --}}
+    <section class="border-b border-ink/10 bg-paper">
+        <div class="mx-auto max-w-6xl px-4 pt-14 pb-16 sm:px-6 lg:px-8 lg:pt-20">
+            <div class="grid items-end gap-12 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
+                <div>
+                    <h1 class="font-serif text-5xl leading-[1.05] tracking-tight text-ink sm:text-6xl lg:text-7xl">
+                        Writing worth<em class="not-italic text-forest"> your</em> morning.
+                    </h1>
+                    <p class="mt-6 max-w-[52ch] text-lg leading-relaxed text-ink/70">
+                        Discover insightful articles, tutorials, and stories from our community of writers.
+                    </p>
+                    <div class="mt-8 flex flex-wrap items-center gap-4">
+                        <a href="{{ route('posts.index') }}"
+                           class="inline-flex items-center bg-forest px-6 py-3 text-base font-medium text-paper transition-colors hover:bg-forest-deep">
+                            Explore Blog
+                        </a>
+                        @guest
+                            <a href="{{ route('register') }}"
+                               class="inline-flex items-center border-b-2 border-forest px-1 py-2 text-base font-medium text-forest transition-colors hover:border-ink hover:text-ink">
+                                Join the Community
+                            </a>
+                        @endguest
+                    </div>
+                </div>
 
-            <div class="mt-12 grid gap-8 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1">
-                @forelse($latestPosts as $post)
-                    <div class="group relative bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                        <a href="{{ route('posts.show', $post->slug) }}">
-                            <div class="relative h-48">
-                                <img class="w-full h-full object-cover" src="{{ $post->featured_image ? asset('storage/' . $post->featured_image) : 'https://images.unsplash.com/photo-1496128858413-b36217c2ce36?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3603&q=80' }}" alt="{{ $post->title }}">
-                                <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
+                @if($lead)
+                    <article>
+                        <a href="{{ route('posts.show', $lead->slug) }}" class="block">
+                            <div class="aspect-[16/10] overflow-clip bg-ink/5">
+                                <img class="h-full w-full object-cover"
+                                     src="{{ $lead->featured_image ? asset('storage/' . $lead->featured_image) : 'https://images.unsplash.com/photo-1496128858413-b36217c2ce36?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=70' }}"
+                                     alt="{{ $lead->title }}" width="1200" height="750"
+                                     fetchpriority="high" decoding="async">
                             </div>
                         </a>
-                        <div class="p-6">
-                            <div class="flex items-center text-sm mb-2">
-                                <span class="text-indigo-600 bg-indigo-100 rounded-full px-3 py-1">{{ $post->category->name }}</span>
-                                <span class="ml-auto text-gray-500">{{ $post->published_at->format('M d, Y') }}</span>
-                            </div>
-                            <a href="{{ route('posts.show', $post->slug) }}" class="block mt-2">
-                                <h3 class="text-xl font-semibold text-gray-900 group-hover:text-indigo-600 transition duration-300">{{ $post->title }}</h3>
-                                <p class="mt-3 text-base text-gray-500 line-clamp-2">{{ $post->excerpt ?? Str::limit(strip_tags($post->content), 150) }}</p>
-                            </a>
-                            <div class="mt-4 flex items-center">
-                                <div class="flex-shrink-0">
-                                    <img class="h-10 w-10 rounded-full" src="{{ $post->user->avatar ? asset('storage/' . $post->user->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode($post->user->name) . '&color=7F9CF5&background=EBF4FF' }}" alt="{{ $post->user->name }}">
-                                </div>
-                                <div class="ml-3">
-                                    <p class="text-sm font-medium text-gray-900">{{ $post->user->name }}</p>
-                                </div>
-                            </div>
+                        <div class="mt-5 flex items-baseline justify-between gap-4 border-t border-ink/15 pt-4 text-sm text-ink/60">
+                            <span class="font-medium text-forest">{{ $lead->category->name }}</span>
+                            <time datetime="{{ $lead->published_at->toDateTimeString() }}">{{ $lead->published_at->format('F j, Y') }}</time>
                         </div>
-                    </div>
-                @empty
-                    <div class="col-span-3 text-center py-12">
-                        <p class="text-gray-500">No posts found. Check back soon!</p>
-                    </div>
-                @endforelse
+                        <a href="{{ route('posts.show', $lead->slug) }}" class="block">
+                            <h2 class="mt-2 font-serif text-3xl leading-snug text-ink sm:text-4xl">
+                                {{ $lead->title }}
+                            </h2>
+                            <p class="mt-3 max-w-[60ch] leading-relaxed text-ink/70">
+                                {{ $lead->excerpt ?? Str::limit(strip_tags($lead->content), 180) }}
+                            </p>
+                            <p class="mt-4 text-sm text-ink/60">
+                                By <span class="font-medium text-ink">{{ $lead->user->name }}</span>
+                            </p>
+                        </a>
+                    </article>
+                @endif
+            </div>
+        </div>
+    </section>
+
+    {{-- Latest posts: editorial columns, hairline rules --}}
+    <section class="cv-auto border-b border-ink/10 bg-paper-raised">
+        <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
+            <div class="flex flex-wrap items-baseline justify-between gap-4 border-b-2 border-ink pb-4">
+                <h2 class="font-serif text-3xl text-ink sm:text-4xl">Fresh content for you</h2>
+                <a href="{{ route('posts.index') }}" class="text-sm font-medium text-forest underline-offset-4 hover:text-ink hover:underline">
+                    View all posts
+                </a>
             </div>
 
-            <div class="text-center mt-12">
-                <a href="{{ route('posts.index') }}" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
-                    View All Posts
+            <div class="mt-10 grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+                @forelse($latestPosts->skip(1) as $post)
+                    <article class="flex flex-col border-t border-ink/15 pt-5">
+                        <div class="mb-3 overflow-clip bg-ink/5">
+                            <img class="aspect-[3/2] w-full object-cover transition-transform duration-500 ease-out hover:scale-[1.03] motion-reduce:transition-none"
+                                 src="{{ $post->featured_image ? asset('storage/' . $post->featured_image) : 'https://images.unsplash.com/photo-1496128858413-b36217c2ce36?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=60' }}"
+                                 alt="{{ $post->title }}" width="800" height="533"
+                                 loading="lazy" decoding="async">
+                        </div>
+                        <div class="flex items-baseline justify-between gap-3 text-sm text-ink/60">
+                            <span class="font-medium text-forest">{{ $post->category->name }}</span>
+                            <time datetime="{{ $post->published_at->toDateTimeString() }}">{{ $post->published_at->format('M d, Y') }}</time>
+                        </div>
+                        <a href="{{ route('posts.show', $post->slug) }}" class="mt-2">
+                            <h3 class="font-serif text-xl leading-snug text-ink underline-offset-4 hover:text-forest hover:underline">
+                                {{ $post->title }}
+                            </h3>
+                        </a>
+                        <p class="mt-2 text-sm leading-relaxed text-ink/70">
+                            {{ $post->excerpt ?? Str::limit(strip_tags($post->content), 140) }}
+                        </p>
+                        <p class="mt-auto pt-4 text-sm text-ink/60">
+                            By <span class="font-medium text-ink">{{ $post->user->name }}</span>
+                        </p>
+                    </article>
+                @empty
+                    <p class="col-span-full py-12 text-center text-ink/60">No posts found. Check back soon!</p>
+                @endforelse
+            </div>
+        </div>
+    </section>
+
+    {{-- Popular: ranked by views, so the numerals are a real sequence --}}
+    <section class="cv-auto border-b border-ink/10 bg-paper">
+        <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
+            <div class="border-b-2 border-ink pb-4">
+                <h2 class="font-serif text-3xl text-ink sm:text-4xl">Community favorites</h2>
+            </div>
+
+            <ol class="mt-2 divide-y divide-ink/10">
+                @forelse($popularPosts as $i => $post)
+                    <li>
+                        <a href="{{ route('posts.show', $post->slug) }}"
+                           class="group grid grid-cols-[auto_minmax(0,1fr)] items-baseline gap-x-5 py-6 sm:grid-cols-[auto_minmax(0,1fr)_auto]">
+                            <span class="font-serif text-3xl leading-none text-forest/90 tabular-nums" aria-hidden="true">{{ sprintf('%02d', $i + 1) }}</span>
+                            <span>
+                                <span class="block font-serif text-2xl leading-snug text-ink underline-offset-4 group-hover:text-forest group-hover:underline">
+                                    {{ $post->title }}
+                                </span>
+                                <span class="mt-2 block max-w-[70ch] text-sm leading-relaxed text-ink/70">
+                                    {{ $post->excerpt ?? Str::limit(strip_tags($post->content), 160) }}
+                                </span>
+                                <span class="mt-2 block text-sm text-ink/60">
+                                    {{ $post->category->name }} &middot; {{ $post->published_at->format('M d, Y') }} &middot; by {{ $post->user->name }}
+                                </span>
+                            </span>
+                            <span class="col-start-2 mt-3 text-sm text-ink/50 sm:col-start-3 sm:mt-0 sm:justify-self-end sm:text-right">
+                                {{ number_format($post->view_count) }} views
+                            </span>
+                        </a>
+                    </li>
+                @empty
+                    <li class="py-12 text-center text-ink/60">Nothing popular yet. Be the first reader!</li>
+                @endforelse
+            </ol>
+        </div>
+    </section>
+
+    {{-- Browse by category and tag --}}
+    <section class="cv-auto border-b border-ink/10 bg-paper-raised">
+        <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
+            <div class="border-b-2 border-ink pb-4">
+                <h2 class="font-serif text-3xl text-ink sm:text-4xl">Browse by</h2>
+            </div>
+
+            <div class="mt-8 grid gap-12 md:grid-cols-2">
+                <div>
+                    <h3 class="text-sm font-medium text-ink/60">Popular categories</h3>
+                    <ul class="mt-4 divide-y divide-ink/10">
+                        @foreach($categories as $category)
+                            <li>
+                                <a href="{{ route('categories.show', $category->slug) }}"
+                                   class="flex items-baseline justify-between gap-4 py-3 text-ink underline-offset-4 hover:text-forest hover:underline">
+                                    <span class="font-serif text-lg">{{ $category->name }}</span>
+                                    <span class="text-sm text-ink/50 tabular-nums">{{ $category->posts_count }} posts</span>
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-sm font-medium text-ink/60">Popular tags</h3>
+                    <div class="mt-4 flex flex-wrap gap-2">
+                        @foreach($tags as $tag)
+                            <a href="{{ route('tags.show', $tag->slug) }}"
+                               class="border border-ink/20 px-3 py-1.5 text-sm text-ink/80 transition-colors hover:border-forest hover:text-forest">
+                                #{{ $tag->name }} <span class="text-ink/40 tabular-nums">{{ $tag->posts_count }}</span>
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{-- Closing call to action --}}
+    <section class="bg-forest">
+        <div class="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-16 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
+            <h2 class="max-w-[24ch] font-serif text-3xl leading-tight text-paper sm:text-4xl">
+                Ready to dive in? Start your blogging journey today.
+            </h2>
+            <div class="flex flex-wrap gap-4">
+                @guest
+                    <a href="{{ route('register') }}"
+                       class="inline-flex items-center bg-paper px-6 py-3 text-base font-medium text-ink transition-colors hover:bg-white">
+                        Create an Account
+                    </a>
+                @else
+                    <a href="{{ route('posts.create') }}"
+                       class="inline-flex items-center bg-paper px-6 py-3 text-base font-medium text-ink transition-colors hover:bg-white">
+                        Create a Post
+                    </a>
+                @endguest
+                <a href="{{ route('posts.index') }}"
+                   class="inline-flex items-center border border-paper/40 px-6 py-3 text-base font-medium text-paper transition-colors hover:border-paper hover:bg-forest-deep">
+                    Explore Posts
                 </a>
             </div>
         </div>
-    </div>
-
-    <!-- Popular Posts Section -->
-    <div class="py-12 bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="lg:text-center mb-10">
-                <h2 class="text-base text-indigo-600 font-semibold tracking-wide uppercase">Popular Posts</h2>
-                <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-                    Community Favorites
-                </p>
-            </div>
-
-            <div class="mt-12 space-y-6">
-                @forelse($popularPosts as $post)
-                    <div class="bg-white rounded-lg shadow overflow-hidden hover:shadow-md transition-shadow duration-300">
-                        <a href="{{ route('posts.show', $post->slug) }}" class="flex flex-col md:flex-row">
-                            <div class="md:w-1/4 flex-shrink-0">
-                                <img class="h-48 w-full object-cover md:h-full" src="{{ $post->featured_image ? asset('storage/' . $post->featured_image) : 'https://images.unsplash.com/photo-1496128858413-b36217c2ce36?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3603&q=80' }}" alt="{{ $post->title }}">
-                            </div>
-                            <div class="p-6 md:w-3/4">
-                                <div class="flex items-center text-sm mb-2">
-                                    <span class="text-indigo-600 bg-indigo-100 rounded-full px-3 py-1">{{ $post->category->name }}</span>
-                                    <span class="ml-3 text-gray-500">{{ $post->published_at->format('M d, Y') }}</span>
-                                    <span class="ml-auto flex items-center text-gray-500">
-                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                                            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
-                                        </svg>
-                                        {{ $post->view_count }}
-                                    </span>
-                                </div>
-                                <h3 class="text-xl font-semibold text-gray-900 hover:text-indigo-600 transition duration-300">{{ $post->title }}</h3>
-                                <p class="mt-3 text-base text-gray-500 line-clamp-2">{{ $post->excerpt ?? Str::limit(strip_tags($post->content), 200) }}</p>
-                                <div class="mt-4 flex items-center">
-                                    <div class="flex-shrink-0">
-                                        <img class="h-10 w-10 rounded-full" src="{{ $post->user->avatar ? asset('storage/' . $post->user->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode($post->user->name) . '&color=7F9CF5&background=EBF4FF' }}" alt="{{ $post->user->name }}">
-                                    </div>
-                                    <div class="ml-3">
-                                        <p class="text-sm font-medium text-gray-900">{{ $post->user->name }}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                @empty
-                    <div class="text-center py-12">
-                        <p class="text-gray-500">No popular posts yet. Check back soon!</p>
-                    </div>
-                @endforelse
-            </div>
-        </div>
-    </div>
-
-    <!-- Categories and Tags Section -->
-    <div class="py-12 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="lg:text-center mb-10">
-                <h2 class="text-base text-indigo-600 font-semibold tracking-wide uppercase">Browse By</h2>
-                <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-                    Categories and Tags
-                </p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Categories -->
-                <div class="bg-gray-50 rounded-lg shadow p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Popular Categories</h3>
-                    <div class="grid grid-cols-2 gap-2">
-                        @foreach($categories as $category)
-                            <a href="{{ route('categories.show', $category->slug) }}" class="flex items-center p-3 rounded-md hover:bg-indigo-50 transition-colors duration-200">
-                                <span class="text-indigo-600 mr-2">
-                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd" d="M2 5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 002 2H4a2 2 0 01-2-2V5zm3 1h6v4H5V6zm6 6H5v2h6v-2z" clip-rule="evenodd" />
-                                        <path d="M15 7h1a2 2 0 012 2v5.5a1.5 1.5 0 01-3 0V7z" />
-                                    </svg>
-                                </span>
-                                <span class="text-gray-700">{{ $category->name }} <span class="text-gray-500 text-xs">({{ $category->posts_count }})</span></span>
-                            </a>
-                        @endforeach
-                    </div>
-                </div>
-
-                <!-- Tags -->
-                <div class="bg-gray-50 rounded-lg shadow p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Popular Tags</h3>
-                    <div class="flex flex-wrap gap-2">
-                        @foreach($tags as $tag)
-                            <a href="{{ route('tags.show', $tag->slug) }}" class="bg-white hover:bg-indigo-50 text-indigo-600 rounded-full px-3 py-1 text-sm font-medium transition-colors duration-200">
-                                #{{ $tag->name }} <span class="text-gray-500 text-xs">({{ $tag->posts_count }})</span>
-                            </a>
-                        @endforeach
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- CTA Section -->
-    <div class="bg-indigo-700">
-        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8 lg:flex lg:items-center lg:justify-between">
-            <h2 class="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-                <span class="block">Ready to dive in?</span>
-                <span class="block text-indigo-200">Start your blogging journey today.</span>
-            </h2>
-            <div class="mt-8 flex lg:mt-0 lg:flex-shrink-0">
-                @guest
-                    <div class="inline-flex rounded-md shadow">
-                        <a href="{{ route('register') }}" class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-indigo-600 bg-white hover:bg-indigo-50">
-                            Create an Account
-                        </a>
-                    </div>
-                @else
-                    <div class="inline-flex rounded-md shadow">
-                        <a href="{{ route('posts.create') }}" class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-indigo-600 bg-white hover:bg-indigo-50">
-                            Create a Post
-                        </a>
-                    </div>
-                @endguest
-                <div class="ml-3 inline-flex rounded-md shadow">
-                    <a href="{{ route('posts.index') }}" class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500">
-                        Explore Posts
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-@endsection 
+    </section>
+@endsection

@@ -9,6 +9,14 @@
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+
+    --font-serif: 'Fraunces', ui-serif, Georgia, 'Times New Roman', serif;
+
+    --color-paper: #faf7f1;
+    --color-paper-raised: #f3efe6;
+    --color-ink: #1c1a16;
+    --color-forest: #1f4d3a;
+    --color-forest-deep: #16382a;
 }
 
 @plugin "@tailwindcss/typography";
@@ -82,6 +90,19 @@
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 3;
     }
+}
+
+/* Skip render work for below-fold landing sections */
+.cv-auto {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 900px;
+}
+
+/* Visible keyboard focus site-wide */
+a:focus-visible,
+button:focus-visible {
+    outline: 2px solid var(--color-forest);
+    outline-offset: 2px;
 }
 
 /* Trix editor styles */
